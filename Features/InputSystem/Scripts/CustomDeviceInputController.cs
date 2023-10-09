@@ -69,11 +69,15 @@ namespace NewInputSystem
         {
             if (m_IsEnabled)
             {
+                ResetMovement();
                 m_Hud.DeviceControls.gameObject.SetActive(false);
                 if (m_ControlScheme == TouchScreenControlScheme.TouchMovement)
                 {
                     EnchancedTouch.EnhancedTouchSupport.Disable();
                     RemoveEnhancedTouchListeners();
+                    m_MovementFinger = null;
+                    m_AimFinger = null;
+                    m_LastPosition = Vector2.zero;
                 }
                 else
                 {
@@ -104,9 +108,9 @@ namespace NewInputSystem
         {
             m_Hud.DeviceControls.EatButton.Button.onClick.AddListener(Eat);
             m_Hud.DeviceControls.ToLeftButton.FingerDown += MoveToLeft;
-            m_Hud.DeviceControls.ToLeftButton.FingerUp += RefreshMovement;
+            m_Hud.DeviceControls.ToLeftButton.FingerUp += ResetMovement;
             m_Hud.DeviceControls.ToRightButton.FingerDown += MoveToRight;
-            m_Hud.DeviceControls.ToRightButton.FingerUp += RefreshMovement;
+            m_Hud.DeviceControls.ToRightButton.FingerUp += ResetMovement;
             m_Hud.DeviceControls.CustomAim.FingerDown += SetAim;
             m_Hud.DeviceControls.CustomAim.FingerMove += SetAim;
             m_Hud.DeviceControls.CustomAim.FingerUp += OnFingerUp;
@@ -116,9 +120,9 @@ namespace NewInputSystem
         {
             m_Hud.DeviceControls.EatButton.Button.onClick.RemoveListener(Eat);
             m_Hud.DeviceControls.ToLeftButton.FingerDown -= MoveToLeft;
-            m_Hud.DeviceControls.ToLeftButton.FingerUp -= RefreshMovement;
+            m_Hud.DeviceControls.ToLeftButton.FingerUp -= ResetMovement;
             m_Hud.DeviceControls.ToRightButton.FingerDown -= MoveToRight;
-            m_Hud.DeviceControls.ToRightButton.FingerUp -= RefreshMovement;
+            m_Hud.DeviceControls.ToRightButton.FingerUp -= ResetMovement;
             m_Hud.DeviceControls.CustomAim.FingerDown -= SetAim;
             m_Hud.DeviceControls.CustomAim.FingerMove -= SetAim;
             m_Hud.DeviceControls.CustomAim.FingerUp -= OnFingerUp;
@@ -160,7 +164,7 @@ namespace NewInputSystem
         {
             if (CheckIfMovementFinger(finger))
             {
-                RefreshMovement();
+                ResetMovement();
                 m_MovementFinger = null;
             }
             else if (CheckIfAimFinger(finger))
@@ -196,6 +200,6 @@ namespace NewInputSystem
 
         private void MoveToLeft() => m_Controllable.SetMovementDirection(Vector2.left);
         private void MoveToRight() => m_Controllable.SetMovementDirection(Vector2.right);
-        private void RefreshMovement() => m_Controllable.SetMovementDirection(Vector2.zero);
+        private void ResetMovement() => m_Controllable.SetMovementDirection(Vector2.zero);
     }
 }

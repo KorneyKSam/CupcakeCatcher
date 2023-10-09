@@ -36,6 +36,7 @@ namespace Dragon
         [Header("Night mode")]
         [SerializeField] private Transform m_LampTransform;
         [SerializeField] private List<Light2D> m_Lights;
+        [SerializeField] private GameObject m_NightLamp;
 
         [Header("Needle references")]
         [SerializeField] private AlienDragonNeedle m_Needle;
@@ -56,7 +57,7 @@ namespace Dragon
         private Vector2 m_MovingDirection;
         private Vector2 m_TempVelocity;
 
-        private TimeOfDay m_CurrentTimeOfDayMode;
+        private TimeOfDay? m_CurrentTimeOfDayMode;
 
         private float m_ShootCooldown;
         private float m_CurrentSpeed;
@@ -147,10 +148,11 @@ namespace Dragon
 
         public void SetTimeOfDayMode(TimeOfDay timeOfDay)
         {
-            if (m_CurrentTimeOfDayMode != timeOfDay)
+            if (m_CurrentTimeOfDayMode == null || m_CurrentTimeOfDayMode != timeOfDay)
             {
                 m_CurrentTimeOfDayMode = timeOfDay;
                 bool isNight = m_CurrentTimeOfDayMode == TimeOfDay.Night;
+                m_NightLamp.SetActive(isNight);
                 m_Lights.ForEach(l => l.gameObject.SetActive(isNight));
             }
         }
